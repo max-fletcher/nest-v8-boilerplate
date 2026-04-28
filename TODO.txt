@@ -1,0 +1,19 @@
+1. store encrypted/hashed password instead of raw password
+2. user registration route
+3. Add rate limiter
+4. Add cors
+5. Add logger
+6. Add custom exception handler
+7. Use .env for secret & secretOrKey
+8. Catch Drizzle Errors/Exceptions(CANNOT BE DONE WITH CURRENT SCOPE)
+
+FROM NODE BOILERPLATE MONGO
+1. Relations
+2. DB Transactions when disjointing relational data
+3. Authorization and Access Control(i.e roles and permissions)
+4. PDF/Invoice generation
+5. Nested Relations
+6. Pagination for getAll calls
+7. Scheduled Task
+8. Formatted responses
+9. Queue

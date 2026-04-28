@@ -1,7 +1,8 @@
 import { HttpAdapterHost, NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
 import { AllExceptionsFilter } from './all-exceptions.filter'
-import { ValidationPipe } from '@nestjs/common'
+import { UnprocessableEntityException, ValidationPipe } from '@nestjs/common'
+import { ValidationError } from 'class-validator'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
@@ -12,10 +13,45 @@ async function bootstrap() {
   //   prefix: '/uploads/'
   // })
 
+  // FUNCTION THAT IS AS A FACTORY(SEE BELOW INSIDE app.useGlobalPipes) TO STRUCTURE ERRORS IN A DESIRED FORM
+  function extractNestedErrors(errors: ValidationError[]): Record<string, string[]> {
+    const result = {}
+    errors.forEach((error) => {
+      if (error.constraints) {
+        // result[error.property] = Object.values(error.constraints); // REPLACE LINE BELOW WITH THIS IS YOU WANT ALL VAL ERRORS AS ARRAY
+        result[error.property] = Object.values(error.constraints)[0]
+      } else if (error.children && error.children.length > 0) {
+        // result[error.property] = extractNestedErrors(error.children); // REPLACE LINE BELOW WITH THIS IS YOU WANT ALL VAL ERRORS AS ARRAY
+        result[error.property] = extractNestedErrors(error.children)[0]
+      }
+    })
+    return result
+  }
+
+  // USING A CUSTOM VALIDATION PIPE GLOBALLY TO FORMAT ERRORS TO A DESIRED FORM
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
-      transform: true
+      stopAtFirstError: true, // stop at first validation failure(order not guaranteed)
+      exceptionFactory: (errors: ValidationError[]) => {
+        // NOT IN USE HERE IF YOU ARE USING CUSTOM GLOBAL EXCEPTION HANDLER/FILTER(I.E AllExceptionsFilter). VALIDATION ERRORS ARE HANDLED THERE AND
+        const formattedErrors = {}
+
+        errors.forEach((error) => {
+          if (error.constraints) {
+            // formattedErrors[error.property] = Object.values(error.constraints) // REPLACE LINE BELOW WITH THIS IS YOU WANT ALL VAL ERRORS AS ARRAY
+            formattedErrors[error.property] = Object.values(error.constraints)[0]
+          } else if (error.children && error.children.length > 0) {
+            // formattedErrors[error.property] = extractNestedErrors(error.children) // REPLACE LINE BELOW WITH THIS IS YOU WANT ALL VAL ERRORS AS ARRAY
+            formattedErrors[error.property] = extractNestedErrors(error.children)[0]
+          }
+        })
+
+        return new UnprocessableEntityException({
+          message: 'Validation failed',
+          errors: formattedErrors
+        })
+      }
     })
   )
 

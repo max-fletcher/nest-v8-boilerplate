@@ -1,19 +1,19 @@
-1. store encrypted/hashed password instead of raw password
-2. user registration route
-3. Add rate limiter
-4. Add cors
-5. Add logger
-6. Add custom exception handler
-7. Use .env for secret & secretOrKey
-8. Catch Drizzle Errors/Exceptions(CANNOT BE DONE WITH CURRENT SCOPE)
-
-FROM NODE BOILERPLATE MONGO
-1. Relations
-2. DB Transactions when disjointing relational data
-3. Authorization and Access Control(i.e roles and permissions)
-4. PDF/Invoice generation
-5. Nested Relations
-6. Pagination for getAll calls
-7. Scheduled Task
-8. Formatted responses
-9. Queue
+1. File upload
+2. validation (Need to pivot to zod. Class validator doesn't enforce order.)
+3. store encrypted/hashed password instead of raw password
+4. user registration & login route with access and refresh tokens
+5. Add rate limiter
+6. Add cors
+7. Add logger
+8. Add custom exception handler(DONE)
+9. Use .env for secret & secretOrKey
+10. Relations
+11. Nested Relations
+12. Pagination for getAll calls
+13. DB Transactions when disjointing relational data
+14. Authorization and Access Control(i.e roles and permissions)
+15. PDF/Invoice generation
+16. Scheduled Task
+17. Formatted responses
+18. Redis
+19. Queue (e.g for email delivery)

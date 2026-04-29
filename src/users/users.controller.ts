@@ -1,14 +1,17 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common'
 import { UsersService } from './users.service'
-import { CreateUserDto } from './dto/create-user.dto'
-import { UpdateUserDto } from './dto/update-user.dto'
+import { ZodValidationPipe } from 'src/common/pipes/zod-validate.pipes'
+import { CreateUserSchema } from './validators/create-user.schema'
+import type { TCreateUserZodValDto } from './validators/create-user.schema'
+import { UpdateUserSchema, type TUpdateUserZodValDto } from './validators/update-user.schema'
 
 @Controller('api/v1/users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
+  create(@Body(new ZodValidationPipe(CreateUserSchema)) createUserDto: TCreateUserZodValDto) {
+    console.log(createUserDto)
     return this.usersService.create(createUserDto)
   }
 
@@ -23,7 +26,7 @@ export class UsersController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  update(@Param('id') id: string, @Body(new ZodValidationPipe(UpdateUserSchema)) updateUserDto: TUpdateUserZodValDto) {
     return this.usersService.update(id, updateUserDto)
   }
 

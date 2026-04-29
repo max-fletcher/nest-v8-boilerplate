@@ -1,5 +1,5 @@
 1. File upload
-2. validation (Need to pivot to zod. Class validator doesn't enforce order.)
+2. validation (Need to pivot to zod. Class validator doesn't enforce order.)(DONE)
 3. store encrypted/hashed password instead of raw password
 4. user registration & login route with access and refresh tokens
 5. Add rate limiter

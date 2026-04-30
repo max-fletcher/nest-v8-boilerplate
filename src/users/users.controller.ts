@@ -22,7 +22,7 @@ export class UsersController {
         { name: 'background', maxCount: 1 }
       ],
       {
-        storage: diskStorageEngine('avatar')
+        storage: diskStorageEngine('users')
       }
     )
   )

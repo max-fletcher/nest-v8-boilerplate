@@ -18,20 +18,21 @@ export type FieldsType = {
   size: number
 }
 
-export const multipleFileLocalFullPathResolver = (req: Request) => {
-  if (!req.files || !Object.keys(req.files).length) return
+type MulterFiles = Record<string, Express.Multer.File[]>
+
+export const multipleFileLocalFullPathResolver = (baseUrl: string, files: MulterFiles) => {
+  if (!files || !Object.keys(files).length) return
+
+  console.log('multipleFileLocalFullPathResolver', files)
 
   const formatted_paths: Record<string, string[]> = {}
 
-  Object.entries(req.files).forEach(([fieldName, fileArray]) => {
-    const paths = (fileArray as Express.Multer.File[]).map((file) => {
+  Object.entries(files).forEach(([fieldName, fileArray]) => {
+    const paths = fileArray.map((file) => {
       const publicDirPath = resolve('public') // Absolute path to /public
       const filePath = resolve(file.path) // Absolute path to uploaded file
-
       const relativePath = relative(publicDirPath, filePath).replace(/\\/g, '/') // Always forward slashes
-
-      const baseUrl = process.env.FILE_BASE_URL && process.env.FILE_BASE_URL !== '' ? process.env.FILE_BASE_URL : `${req.protocol}://${req.get('host')}`
-
+      baseUrl = process.env.FILE_BASE_URL && process.env.FILE_BASE_URL !== '' ? process.env.FILE_BASE_URL : baseUrl
       return `${baseUrl}/${relativePath}`
     })
 

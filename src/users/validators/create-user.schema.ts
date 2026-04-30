@@ -1,3 +1,4 @@
+import { imageValidationRule } from 'src/common/zod/zod-rules.zod'
 import { z } from 'zod'
 
 export const CreateUserSchema = z.object({
@@ -17,7 +18,11 @@ export const CreateUserSchema = z.object({
       error: (issue) => (issue.input === undefined ? 'Password is required' : 'Password must be a string')
     })
     .min(8, 'Password must be at least 8 characters')
-    .max(50)
+    .max(50),
+  avatar: z.array(imageValidationRule).optional().nullable(),
+  background: z.array(imageValidationRule).optional().nullable()
 })
 
 export type TCreateUserZodValDto = z.infer<typeof CreateUserSchema>
+export type TCreateUserBodyDto = Omit<TCreateUserZodValDto, 'avatar'>
+export type TCreateUserStoreDataDto = TCreateUserBodyDto & { avatar: string | undefined }

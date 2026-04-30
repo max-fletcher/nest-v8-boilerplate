@@ -12,7 +12,7 @@ export class UsersService {
     } catch (error) {
       console.log('Create user service', error)
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-        throw new ConflictException('User with this email already exists')
+        throw new ConflictException('Unique constraint violation')
       }
       throw error
     }

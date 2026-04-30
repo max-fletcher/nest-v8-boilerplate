@@ -3,15 +3,17 @@ import { AppModule } from './app.module'
 import { AllExceptionsFilter } from './all-exceptions.filter'
 import { UnprocessableEntityException, ValidationPipe } from '@nestjs/common'
 import { ValidationError } from 'class-validator'
+import { NestExpressApplication } from '@nestjs/platform-express'
+import { join } from 'path'
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule)
+  const app = await NestFactory.create<NestExpressApplication>(AppModule)
 
   // Serve static files from the "uploads" directory at the "/uploads" URL path
   // *IMPORTANT NOTE: The starting directory is from /dist. That is why we are using join(__dirname, '..', '..', 'public', 'uploads') and not join(__dirname, '..', 'public', 'uploads')
-  // app.useStaticAssets(join(__dirname, '..', '..', 'public', 'uploads'), {
-  //   prefix: '/uploads/'
-  // })
+  app.useStaticAssets(join(__dirname, '..', '..', 'public', 'uploads'), {
+    prefix: '/uploads/'
+  })
 
   // FUNCTION THAT IS AS A FACTORY(SEE BELOW INSIDE app.useGlobalPipes) TO STRUCTURE ERRORS IN A DESIRED FORM
   function extractNestedErrors(errors: ValidationError[]): Record<string, string[]> {

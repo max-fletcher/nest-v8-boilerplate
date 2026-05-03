@@ -10,7 +10,7 @@ export class UsersService {
     try {
       return await this.prisma.user.create({ data })
     } catch (error) {
-      console.log('Create user service', error)
+      // TODO: Change this to check which field unique constrating failed
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         throw new ConflictException('Unique constraint violation')
       }
@@ -34,8 +34,8 @@ export class UsersService {
       if (!userExists) throw new NotFoundException(`User with id ${id} not found`)
       return await this.prisma.user.update({ where: { id }, data })
     } catch (error) {
-      console.log('Update user service', error)
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        // TODO: Change this to check which field unique constrating failed
         throw new ConflictException('User with this email already exists')
       }
       throw error
@@ -43,13 +43,8 @@ export class UsersService {
   }
 
   async remove(id: string) {
-    try {
-      const userExists = await this.prisma.user.count({ where: { id } })
-      if (!userExists) throw new NotFoundException(`User with id ${id} not found`)
-      return this.prisma.user.delete({ where: { id } })
-    } catch (error) {
-      console.log('Delete user service', error)
-      throw error // re-throw anything unexpected
-    }
+    const userExists = await this.prisma.user.count({ where: { id } })
+    if (!userExists) throw new NotFoundException(`User with id ${id} not found`)
+    return this.prisma.user.delete({ where: { id } })
   }
 }

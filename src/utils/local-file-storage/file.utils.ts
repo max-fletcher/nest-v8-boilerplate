@@ -1,4 +1,3 @@
-import { Request } from 'express'
 import { relative, resolve } from 'path'
 import { promises as fsPromises } from 'fs'
 import * as path from 'path'
@@ -20,10 +19,8 @@ export type FieldsType = {
 
 type MulterFiles = Record<string, Express.Multer.File[]>
 
-export const multipleFileLocalFullPathResolver = (baseUrl: string, files: MulterFiles) => {
+export const localFilesFullPathResolver = (baseUrl: string, files: MulterFiles) => {
   if (!files || !Object.keys(files).length) return
-
-  console.log('multipleFileLocalFullPathResolver', files)
 
   const formatted_paths: Record<string, string[]> = {}
 
@@ -42,10 +39,18 @@ export const multipleFileLocalFullPathResolver = (baseUrl: string, files: Multer
   return formatted_paths
 }
 
-export const rollbackLocalFilesUpload = async (req: Request): Promise<void> => {
-  if (!req.files || !Object.keys(req.files).length) return
+export const singleFileExistsInResolver = (fileArray: string[] | undefined) => {
+  if (!fileArray || fileArray.length === 0) return null
 
-  const deletePromises = Object.values(req.files as Record<string, FieldsType[]>)
+  if (fileArray.length < 0) return null
+
+  return fileArray[0]
+}
+
+export const rollbackLocalFilesUpload = async (files: MulterFiles): Promise<void> => {
+  if (!files || !Object.keys(files).length) return
+
+  const deletePromises = Object.values(files as Record<string, FieldsType[]>)
     .flat() // flatten array i.e convert [[field1, field2], [field3]] into [field1, field2, field3]
     .map(async (field: FieldsType) => {
       const filePath = path.normalize(field.path) // ✅ handles both Windows and Linux
@@ -59,10 +64,8 @@ export const rollbackLocalFilesUpload = async (req: Request): Promise<void> => {
   await Promise.all(deletePromises)
 }
 
-export const deleteLocalFile = async (req: Request, filePaths?: string[] | null): Promise<void> => {
+export const deleteLocalFiles = async (baseUrl: string, filePaths: string[] | null): Promise<void> => {
   if (!filePaths || filePaths.length === 0) return
-
-  const baseUrl = process.env.FILE_BASE_URL && process.env.FILE_BASE_URL !== '' ? process.env.FILE_BASE_URL : `${req.protocol}://${req.get('host')}`
 
   const deletePromises = filePaths.map(async (filePath) => {
     const relativePath = filePath.replace(`${baseUrl}/`, '')

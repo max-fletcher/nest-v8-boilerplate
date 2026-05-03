@@ -16,7 +16,7 @@ type ExceptionResponse = null | {
 
 // A typescript type
 type MyResponseObj = {
-  statusCode: number
+  statusCode: HttpStatus
   timestamp: string
   path: string
   response: ExceptionResponse | string
@@ -37,7 +37,7 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
 
     // The default exception that will be thrown if one occurs
     const myResponseObj: MyResponseObj = {
-      statusCode: 500,
+      statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
       timestamp: new Date().toISOString(),
       path: request.url,
       response: null
@@ -65,8 +65,10 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
         }
       }
 
+      // check if this is NestJS's default route not found message
+      const isRouteNotFound = myResponseObj.statusCode === HttpStatus.NOT_FOUND && /^Cannot (GET|POST|PUT|PATCH|DELETE|OPTIONS|HEAD)/.test(msg)
       myResponseObj.response = {
-        message: msg,
+        message: isRouteNotFound ? `Route ${request.method} ${request.url} does not exist.` : msg,
         errors: errors,
         error: exception.getResponse()['error'] as string
       }
@@ -76,6 +78,7 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
       myResponseObj.statusCode = HttpStatus.INTERNAL_SERVER_ERROR
       myResponseObj.response = 'Internal Server Error'
       // Log error data
+      console.log('logger', myResponseObj.response, AllExceptionsFilter.name)
       this.logger.error(myResponseObj.response, AllExceptionsFilter.name)
     }
 

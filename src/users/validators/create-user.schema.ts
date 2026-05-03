@@ -8,11 +8,9 @@ export const CreateUserSchema = z.object({
     })
     .min(3, 'Name must be at least 3 characters')
     .max(300),
-  email: z
-    .string({
-      error: (issue) => (issue.input === undefined ? 'Email is required' : 'Email must be a string')
-    })
-    .email('Invalid email'),
+  email: z.string({
+    error: (issue) => (issue.input === undefined ? 'Email is required' : 'Email must be a string')
+  }),
   password: z
     .string({
       error: (issue) => (issue.input === undefined ? 'Password is required' : 'Password must be a string')
@@ -25,4 +23,7 @@ export const CreateUserSchema = z.object({
 
 export type TCreateUserZodValDto = z.infer<typeof CreateUserSchema>
 export type TCreateUserBodyDto = Omit<TCreateUserZodValDto, 'avatar'>
-export type TCreateUserStoreDataDto = TCreateUserBodyDto & { avatar: string | undefined }
+export type TCreateUserStoreDataDto = TCreateUserBodyDto & {
+  avatar: string | undefined
+  background: string | undefined
+}

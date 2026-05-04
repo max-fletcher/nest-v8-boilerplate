@@ -1,6 +1,7 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { Prisma } from 'generated/prisma/client'
+import { handlePrismaError } from 'src/utils/prisma/prisma.utils'
 
 @Injectable()
 export class UsersService {
@@ -10,9 +11,8 @@ export class UsersService {
     try {
       return await this.prisma.user.create({ data })
     } catch (error) {
-      // TODO: Change this to check which field unique constrating failed
-      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-        throw new ConflictException('Unique constraint violation')
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        handlePrismaError(error)
       }
       throw error
     }
@@ -34,9 +34,8 @@ export class UsersService {
       if (!userExists) throw new NotFoundException(`User with id ${id} not found`)
       return await this.prisma.user.update({ where: { id }, data })
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-        // TODO: Change this to check which field unique constrating failed
-        throw new ConflictException('User with this email already exists')
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        handlePrismaError(error)
       }
       throw error
     }

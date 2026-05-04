@@ -1,10 +1,10 @@
 # File upload(MOSTLY DONE)
 # Route not found response(DONE)
-# Handle prisma constraint errors(e.g for unique constraint failure Prisma.PrismaClientKnownRequestError && error.code === 'P2002')
+# Handle prisma constraint errors(e.g for unique constraint failure Prisma.PrismaClientKnownRequestError && error.code === 'P2002')(DONE)
 # validation (Need to pivot to zod. Class validator doesn't enforce order.)(DONE)
 # store encrypted/hashed password instead of raw password
 # user registration & login route with access and refresh tokens
-# Add rate limiter
+# Add rate limiter(DONE)
 # Add cors(DONE)
 # Add logger(DONE)
 # Add custom exception handler(DONE)

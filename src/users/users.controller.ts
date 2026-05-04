@@ -73,7 +73,7 @@ export class UsersController {
     @BaseUrl() baseUrl: string,
     @UploadedFiles() files: { avatar?: Express.Multer.File[]; background?: Express.Multer.File[] },
     // if you want a pipe validation, use this, but it cannot validate files. You will have to validate it separately.
-    // @Body(new ZodValidationPipe(CreateUserSchema)) createUserDto: TCreateUserZodValDto
+    // @Body(new ZodValidationPipe(UpdateUserSchema)) updateUserDto: TUpdateUserZodValDto
     @Body() updateUserBodyDto: TUpdateUserBodyDto
   ) {
     try {

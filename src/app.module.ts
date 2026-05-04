@@ -27,7 +27,7 @@ import { APP_GUARD } from '@nestjs/core'
       // decorator over a controller func
       {
         ttl: 60000, // 60000 ms i.e 60 seconds
-        limit: 1 // Number of req accepted within this window
+        limit: 60 // Number of req accepted within this window
       }
     ]),
     UsersModule

@@ -6,6 +6,7 @@ import { PrismaModule } from './prisma/prisma.module'
 import { ConfigModule } from '@nestjs/config'
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
 import { APP_GUARD } from '@nestjs/core'
+import { PostsWithUsersModule } from './posts-with-users/posts-with-users.module';
 
 @Module({
   controllers: [AppController],
@@ -30,7 +31,8 @@ import { APP_GUARD } from '@nestjs/core'
         limit: 60 // Number of req accepted within this window
       }
     ]),
-    UsersModule
+    UsersModule,
+    PostsWithUsersModule
   ]
 })
 export class AppModule {}
